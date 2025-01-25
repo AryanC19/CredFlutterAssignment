@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     // Initialize the AnimationController for EMI
     _emiController = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 900),
       vsync: this,
     );
 
@@ -164,13 +164,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   children: [
                     // 1) Slider portion or its collapsed row
                     AnimatedSize(
-                      duration: const Duration(milliseconds: 300),
+                      duration: const Duration(milliseconds: 900),
                       curve: Curves.easeInOut,
                       child: _buildSliderSection(),
                     ),
                     // 2) EMI portion or its collapsed row
                     AnimatedSize(
-                      duration: const Duration(milliseconds: 300),
+                      duration: const Duration(milliseconds: 900),
                       curve: Curves.easeInOut,
                       child: _buildEMIHeaderOrCollapsed(),
                     ),
@@ -220,7 +220,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 // CTA container with a top rounded corner
     return Container(
       decoration: BoxDecoration(
-        color: Colors.blue, // Purple / Blue color
+        color: Color(
+          0xFF33419F,
+        ), // Purple / Blue color
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(24),
           topRight: Radius.circular(24),
@@ -233,7 +235,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 18),
           decoration: BoxDecoration(
-            color: Colors.blue, // same color as container
             borderRadius: BorderRadius.circular(24),
           ),
           child: Center(
@@ -339,7 +340,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: Colors.amber,
+        color: Color(0xFF262A3D), // Add 0xFF for full opacity
       ),
       key: const ValueKey('emiExpanded'),
       padding: const EdgeInsets.all(16),
@@ -490,7 +491,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       height: screenHeight,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-        color: Colors.amber,
+        color: Color(0xFF262A3D), // Add 0xFF for full opacity
       ),
       key: const ValueKey('accountExpanded'),
       padding: const EdgeInsets.all(16),

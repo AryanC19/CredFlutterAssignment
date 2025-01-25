@@ -17,7 +17,7 @@ class ExpandedSliderCard extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return SafeArea(
-      child: Container(
+      child: SizedBox(
         height: screenHeight,
         width: screenWidth,
         child: Column(
@@ -49,7 +49,7 @@ class ExpandedSliderCard extends StatelessWidget {
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
-                    color: Colors.amber,
+                    color: Color(0xFF262A3D), // Add 0xFF for full opacity
                   ),
                   height: screenHeight,
                   child: Column(

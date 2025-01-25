@@ -35,13 +35,16 @@ class _SliderWidgetState extends State<SliderWidget> {
         angleRange: 360,
         size: 220,
         customWidths: CustomSliderWidths(
-          trackWidth: 10,
-          progressBarWidth: 10,
+          trackWidth: 15,
+          progressBarWidth: 15,
           handlerSize: 15,
         ),
         customColors: CustomSliderColors(
-          progressBarColor: Colors.transparent,
-          trackColor: Colors.transparent,
+          progressBarColor: Colors.brown,
+          trackColor: Colors.brown.withOpacity(0.2),
+          // Lighter shade for the track
+          dynamicGradient: true,
+          // Enables gradient effect
           dotColor: Colors.brown,
           hideShadow: true,
         ),
