@@ -22,15 +22,26 @@ class CollapsedRow extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Expanded(
-              child: Text(
-                "Credit amount: ₹${amount.toStringAsFixed(0)}",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Credit amount:",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
                 ),
-              ),
+                Text(
+                  "₹${amount.toStringAsFixed(0)}",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                ),
+              ],
             ),
+            const Spacer(),
             Icon(Icons.arrow_drop_down, color: Colors.white, size: 28),
           ],
         ),

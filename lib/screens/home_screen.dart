@@ -10,23 +10,76 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   bool isExpanded = true;
   double selectedAmount = 150000; // The amount from the slider
+
+  late AnimationController _controller;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize the AnimationController
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    // Define the slide animation for the EMI selection view
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 1), // Start just below the visible area
+      end: Offset.zero, // End at its natural position
+    ).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+
+    // If initially not expanded, ensure the EMI view is visible
+    if (!isExpanded) {
+      _controller.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  // Toggle between expanded and collapsed states
+  void _toggleView() {
+    setState(() {
+      isExpanded = !isExpanded;
+      if (isExpanded) {
+        _controller.reverse();
+      } else {
+        _controller.forward();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black, // entire screen background
+      backgroundColor: Colors.black, // Entire screen background
       body: SafeArea(
         child: SingleChildScrollView(
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            switchInCurve: Curves.easeIn,
-            switchOutCurve: Curves.easeOut,
-            child: isExpanded
-                ? _buildExpandedView()
-                : _buildCollapsedAndSecondView(),
+          child: Column(
+            children: [
+              // AnimatedSize for smooth height transitions
+              AnimatedSize(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                child: isExpanded ? _buildExpandedView() : _buildCollapsedRow(),
+              ),
+              // SlideTransition for the EMI selection view
+              SlideTransition(
+                position: _slideAnimation,
+                child: _buildEMISelectionView(),
+              ),
+            ],
           ),
         ),
       ),
@@ -43,39 +96,29 @@ class _HomeScreenState extends State<HomeScreen> {
           selectedAmount = val;
         });
       },
-      onProceed: () {
-        // When user taps "Proceed to EMI selection,"
-        // collapse this into a row and show the second view
-        setState(() {
-          isExpanded = false;
-        });
-      },
+      onProceed: _toggleView,
     );
   }
 
-  // 2) The collapsed row plus the second portion
-  Widget _buildCollapsedAndSecondView() {
+  // 2) The collapsed row view
+  Widget _buildCollapsedRow() {
+    return CollapsedRow(
+      key: const ValueKey('collapsedRow'),
+      amount: selectedAmount,
+      onTap: _toggleView,
+    );
+  }
+
+  // 3) The EMI selection view
+  Widget _buildEMISelectionView() {
     return Container(
-      key: const ValueKey('collapsedView'),
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Collapsed row at top
-          CollapsedRow(
-            amount: selectedAmount,
-            onTap: () {
-              // Tapping the row or arrow re‐expands the slider
-              setState(() {
-                isExpanded = true;
-              });
-            },
-          ),
-          const SizedBox(height: 24),
-
-          // Second portion
+          // EMI Selection Header
           Text(
-            "how do you wish to repay?",
+            "How do you wish to repay?",
             style: TextStyle(
               color: Colors.white,
               fontSize: 18,
@@ -83,32 +126,32 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 6),
           Text(
-            "choose one of our recommended plans or make your own",
+            "Choose one of our recommended plans or make your own",
             style: TextStyle(
               color: Colors.grey,
               fontSize: 14,
             ),
           ),
           const SizedBox(height: 24),
-
+          // EMI Cards List
           Container(
             height: 180,
             child: ListView(
               scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               children: [
                 EMICardWidget(
                   amountPerMonth: "₹4,247",
                   duration: "12 months",
                   isRecommended: false,
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 EMICardWidget(
                   amountPerMonth: "₹5,580",
                   duration: "9 months",
                   isRecommended: true,
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 EMICardWidget(
                   amountPerMonth: "₹8,247",
                   duration: "6 months",
@@ -117,20 +160,22 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
+          // Create Your Own Plan Button
           Center(
             child: ElevatedButton(
               onPressed: () {
                 // Add your custom plan creation logic here
               },
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 backgroundColor: Colors.blueAccent,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 "Create your own plan",
                 style: TextStyle(
                   fontSize: 16,
@@ -140,14 +185,13 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-
           const SizedBox(height: 40),
-          // For example, a button labeled "Select your bank account"
+          // Select Your Bank Account Button
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                // next flow
+                // Next flow
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
