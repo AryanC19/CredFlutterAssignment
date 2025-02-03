@@ -483,6 +483,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     // Assuming body?.items has EMI plan items
     final emiPlans = body?.items ?? [];
+    final List<Color> emiCardColors = [
+      Color(0xFF43343E),
+      Color(0xFF7C7391),
+      Color(0xFF58698c),
+    ];
 
     return Container(
       height: MediaQuery.of(context).size.height,
@@ -516,14 +521,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 final amountPerMonth = planItem['title'] ?? "₹0/mo";
                 final duration = planItem['subtitle'] ?? "for 0 months";
                 final isRecommended = (planItem['tag'] == "recommended");
+                final bgColor =
+                    emiCardColors[index % emiCardColors.length]; // Assign color
 
                 return Padding(
-                  padding: const EdgeInsets.only(top: 24), // Added top padding
+                  padding: const EdgeInsets.only(top: 24),
                   child: EMICardWidget(
                     amountPerMonth: amountPerMonth,
                     duration: duration,
                     isRecommended: isRecommended,
                     isSelected: selectedCardIndex == index,
+                    bgColor: bgColor,
+                    // Pass color here
                     onSelected: (isSelected) {
                       setState(() {
                         selectedCardIndex = isSelected ? index : null;
@@ -683,7 +692,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 final bankItem = body!.items![index];
                 final bankTitle = bankItem['title'] ?? "Bank Name";
                 final bankSubtitle = "${bankItem['subtitle'] ?? ''}";
-                final bankIcon = bankItem['icon'] ?? "";
+                final String bankIcon =
+                    (bankItem['title'] ?? "").split(" ").first.toLowerCase();
 
                 final isSelected = selectedBankIndex == index;
 
@@ -706,17 +716,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     child: Row(
                       children: [
                         Container(
-                          width: 36,
-                          height: 36,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: bankIcon.isNotEmpty
-                              ? Image.network(bankIcon, fit: BoxFit.contain)
-                              : const Icon(Icons.account_balance,
-                                  color: Colors.black),
-                        ),
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: bankIcon.isNotEmpty
+                                ? Image.asset("assets/images/$bankIcon.png")
+                                : Image.network(bankIcon, fit: BoxFit.contain)),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(

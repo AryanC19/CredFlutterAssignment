@@ -8,6 +8,8 @@ class EMICardWidget extends StatelessWidget {
   final bool isSelected;
   final ValueChanged<bool> onSelected;
 
+  final Color bgColor;
+
   const EMICardWidget({
     Key? key,
     required this.amountPerMonth,
@@ -15,6 +17,7 @@ class EMICardWidget extends StatelessWidget {
     required this.isRecommended,
     required this.isSelected,
     required this.onSelected,
+    required this.bgColor, // Add this
   }) : super(key: key);
 
   @override
@@ -29,7 +32,7 @@ class EMICardWidget extends StatelessWidget {
             margin: const EdgeInsets.only(right: 16),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFF094261),
+              color: bgColor,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: Colors.transparent,
