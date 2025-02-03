@@ -1,9 +1,11 @@
-class StackItemModel {
+// lib/models/data_api_model.dart
+
+class DataAPIModel {
   List<ItemData>? items;
 
-  StackItemModel({this.items});
+  DataAPIModel({this.items});
 
-  StackItemModel.fromJson(Map<String, dynamic> json) {
+  DataAPIModel.fromJson(Map<String, dynamic> json) {
     if (json['items'] != null) {
       items = <ItemData>[];
       json['items'].forEach((v) {
@@ -13,9 +15,9 @@ class StackItemModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    if (this.items != null) {
-      data['items'] = this.items!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = {};
+    if (items != null) {
+      data['items'] = items!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -23,7 +25,7 @@ class StackItemModel {
 
 class ItemData {
   OpenState? openState;
-  OpenState? closedState;
+  ClosedState? closedState; // Corrected to ClosedState
   String? ctaText;
 
   ItemData({this.openState, this.closedState, this.ctaText});
@@ -33,20 +35,20 @@ class ItemData {
         ? OpenState.fromJson(json['open_state'])
         : null;
     closedState = json['closed_state'] != null
-        ? OpenState.fromJson(json['closed_state'])
+        ? ClosedState.fromJson(json['closed_state'])
         : null;
     ctaText = json['cta_text'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    if (this.openState != null) {
-      data['open_state'] = this.openState!.toJson();
+    final Map<String, dynamic> data = {};
+    if (openState != null) {
+      data['open_state'] = openState!.toJson();
     }
-    if (this.closedState != null) {
-      data['closed_state'] = this.closedState!.toJson();
+    if (closedState != null) {
+      data['closed_state'] = closedState!.toJson();
     }
-    data['cta_text'] = this.ctaText;
+    data['cta_text'] = ctaText;
     return data;
   }
 }
@@ -61,9 +63,9 @@ class OpenState {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    if (this.body != null) {
-      data['body'] = this.body!.toJson();
+    final Map<String, dynamic> data = {};
+    if (body != null) {
+      data['body'] = body!.toJson();
     }
     return data;
   }
@@ -74,33 +76,45 @@ class OpenStateBody {
   String? subtitle;
   CardData? card;
   String? footer;
-  List<ItemData>? items;
 
-  OpenStateBody({this.title, this.subtitle, this.card, this.footer, this.items});
+  // Instead of List<ItemData>, store them as a list of raw maps.
+  // This matches the EMI or account "items" that do NOT have open_state/closed_state.
+  List<Map<String, dynamic>>? items;
+
+  OpenStateBody({
+    this.title,
+    this.subtitle,
+    this.card,
+    this.footer,
+    this.items,
+  });
 
   OpenStateBody.fromJson(Map<String, dynamic> json) {
     title = json['title'];
     subtitle = json['subtitle'];
     card = json['card'] != null ? CardData.fromJson(json['card']) : null;
     footer = json['footer'];
+
+    // items are plain maps (like EMI or bank details)
     if (json['items'] != null) {
-      items = <ItemData>[];
-      json['items'].forEach((v) {
-        items!.add(ItemData.fromJson(v));
+      items = <Map<String, dynamic>>[];
+      (json['items'] as List).forEach((v) {
+        // v is a Map like { "emi": "...", "duration": "...", etc. }
+        items!.add(v as Map<String, dynamic>);
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['title'] = this.title;
-    data['subtitle'] = this.subtitle;
-    if (this.card != null) {
-      data['card'] = this.card!.toJson();
+    final Map<String, dynamic> data = {};
+    data['title'] = title;
+    data['subtitle'] = subtitle;
+    if (card != null) {
+      data['card'] = card!.toJson();
     }
-    data['footer'] = this.footer;
-    if (this.items != null) {
-      data['items'] = this.items!.map((v) => v.toJson()).toList();
+    data['footer'] = footer;
+    if (items != null) {
+      data['items'] = items!;
     }
     return data;
   }
@@ -122,11 +136,11 @@ class CardData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['header'] = this.header;
-    data['description'] = this.description;
-    data['max_range'] = this.maxRange;
-    data['min_range'] = this.minRange;
+    final Map<String, dynamic> data = {};
+    data['header'] = header;
+    data['description'] = description;
+    data['max_range'] = maxRange;
+    data['min_range'] = minRange;
     return data;
   }
 }
@@ -141,9 +155,9 @@ class ClosedState {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    if (this.body != null) {
-      data['body'] = this.body!.toJson();
+    final Map<String, dynamic> data = {};
+    if (body != null) {
+      data['body'] = body!.toJson();
     }
     return data;
   }
@@ -161,9 +175,9 @@ class ClosedStateBody {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['key1'] = this.key1;
-    data['key2'] = this.key2;
+    final Map<String, dynamic> data = {};
+    data['key1'] = key1;
+    data['key2'] = key2;
     return data;
   }
 }

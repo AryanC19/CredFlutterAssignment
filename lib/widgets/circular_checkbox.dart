@@ -17,21 +17,21 @@ class CircularCheckbox extends StatelessWidget {
         onChanged(!isChecked);
       },
       child: Container(
-        width: 24,
-        height: 24,
+        width: 34,
+        height: 34,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: isChecked ? Colors.white : Colors.white,
-            width: 2,
+            color: Colors.white,
+            width: 1,
           ),
-          color: isChecked ? Colors.blue : Colors.transparent,
+          color: Colors.transparent,
         ),
         child: isChecked
             ? const Icon(
                 Icons.check,
                 color: Colors.white,
-                size: 16,
+                size: 22,
               )
             : null,
       ),

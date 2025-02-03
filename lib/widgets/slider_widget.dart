@@ -1,13 +1,18 @@
+// lib/widgets/slider_widget.dart
 import 'package:flutter/material.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 class SliderWidget extends StatefulWidget {
   final double initialValue;
+  final double min;
+  final double max;
   final ValueChanged<double> onValueChanged;
 
   const SliderWidget({
     Key? key,
     required this.initialValue,
+    required this.min,
+    required this.max,
     required this.onValueChanged,
   }) : super(key: key);
 
@@ -17,6 +22,7 @@ class SliderWidget extends StatefulWidget {
 
 class _SliderWidgetState extends State<SliderWidget> {
   late double selectedAmount;
+  final Color progressBarColor = const Color(0xFFd18d71);
 
   @override
   void initState() {
@@ -25,10 +31,18 @@ class _SliderWidgetState extends State<SliderWidget> {
   }
 
   @override
+  void didUpdateWidget(covariant SliderWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialValue != widget.initialValue) {
+      selectedAmount = widget.initialValue;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SleekCircularSlider(
-      min: 0,
-      max: 487891,
+      min: widget.min,
+      max: widget.max,
       initialValue: selectedAmount,
       appearance: CircularSliderAppearance(
         startAngle: 270,
@@ -40,13 +54,12 @@ class _SliderWidgetState extends State<SliderWidget> {
           handlerSize: 15,
         ),
         customColors: CustomSliderColors(
-          progressBarColor: Colors.brown,
-          trackColor: Colors.brown.withOpacity(0.2),
-          // Lighter shade for the track
-          dynamicGradient: true,
-          // Enables gradient effect
-          dotColor: Colors.brown,
+          progressBarColor: progressBarColor,
+          trackColor: const Color(0xFFfde9e0),
+          dotColor: Colors.black,
           hideShadow: true,
+          // Add this line to remove shadow
+          dynamicGradient: true,
         ),
       ),
       onChange: (value) {
@@ -74,11 +87,11 @@ class _SliderWidgetState extends State<SliderWidget> {
                 ),
               ),
               const SizedBox(height: 2),
-              Text(
+              const Text(
                 '@1.04% monthly',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.green[700],
+                  color: Colors.green,
                 ),
               ),
             ],
